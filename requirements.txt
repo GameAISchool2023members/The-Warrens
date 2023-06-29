@@ -1,3 +1,7 @@
 pygame
 pyyaml
 json
+flask
+cv2
+opencv-python
+tensorflow
