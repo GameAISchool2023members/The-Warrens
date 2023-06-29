@@ -15,7 +15,7 @@ Battle logic (battle.py)
 
 import numpy as np
 
-class Battle:
+class BattleLogic:
     def __init__(self, player1, player2, context_len):
         self.player1 = player1
         self.player2 = player2
