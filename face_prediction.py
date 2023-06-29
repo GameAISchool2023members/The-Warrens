@@ -20,15 +20,16 @@ class VideoCamera(object):
         gray_fr = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
         faces = facec.detectMultiScale(gray_fr, 1.3, 5)
 
+        assert len(faces) == 2, 'Not two players?'
+        cropped_faces = []
+        predicted_emotions = []
+
         for i, (x, y, w, h) in enumerate(faces):
             fc = gray_fr[y:y+h, x:x+w]
             
-            img_for_save = cv2.resize(fc, (512, 512))
+            cropped_faces.append(cv2.resize(fc, (512, 512)))
 
             roi = cv2.resize(fc, (48, 48))
-            pred = model.predict_emotion(roi[np.newaxis, :, :, np.newaxis])
+            predicted_emotions.append(configs.expresions.index(model.predict_emotion(roi[np.newaxis, :, :, np.newaxis])))
 
-            cv2.putText(fr, pred, (x, y), font, 1, (255, 255, 0), 2)
-            cv2.rectangle(fr,(x,y),(x+w,y+h),(255,0,0),2)
-
-        return pred, img_for_save
+        return cropped_faces, predicted_emotions
