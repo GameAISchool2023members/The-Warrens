@@ -1,0 +1,10 @@
+map:
+    map_size: [64, 32]
+    room_size: [[5, 5], [11, 11]]
+    n_rooms: 7
+    connection_prob: 0.75
+    wall_prob: 0.5
+    # tiles
+    empty_tile: 0
+    ground_tile: 1
+    wall_tile: 2
