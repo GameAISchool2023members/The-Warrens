@@ -91,12 +91,7 @@ class BattleLogic:
         
 
     # TODO: (ANTONIO) I think that battle only has to know about actions. Expr->action should go in another file
-    def step(self, action_player_1: int, action_player_2: int):
-        
-        expected_action_player_1 = np.random.choice(self.num_actions)  # club expressions (if you want to remove 'disgust' etc.)
-        expected_action_player_2 = np.random.choice(self.num_actions)
-        print(f"Player 1: {expected_action_player_1}")
-        print(f"Player 2: {expected_action_player_2}")
+    def step(self, expected_action_player_1, expected_action_player_2, action_player_1: int, action_player_2: int):
 
         # If number of frames that player 1 had expected action, player 1 shoots player 2
         # Elif number of frames that player 2 had expected action, player 2 shoots player 1
@@ -118,11 +113,9 @@ class BattleLogic:
         # check empty health points:
         if self.player1.health_points <= 0:
             self.winner = self.player2.id
-            print("Player 1 won")
             return self.player2.id
         if self.player2.health_points <= 0:
             self.winner = self.player1.id
-            print("Player 2 won")
             return self.player1.id
         else: # Nobody one. Continue playing.
             return
