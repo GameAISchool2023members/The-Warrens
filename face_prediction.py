@@ -3,6 +3,8 @@ from model import FacialExpressionModel
 import numpy as np
 import os
 
+from configs import configs
+
 facec = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 model = FacialExpressionModel("model.json", "model_weights.h5")
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -19,8 +21,8 @@ class VideoCamera(object):
         _, fr = self.video.read()
         gray_fr = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
         faces = facec.detectMultiScale(gray_fr, 1.3, 5)
-
-        assert len(faces) == 2, 'Not two players?'
+        
+        assert faces is not None, 'No faces at all?'
         cropped_faces = []
         predicted_emotions = []
 
@@ -30,6 +32,9 @@ class VideoCamera(object):
             cropped_faces.append(cv2.resize(fc, (512, 512)))
 
             roi = cv2.resize(fc, (48, 48))
-            predicted_emotions.append(configs.expresions.index(model.predict_emotion(roi[np.newaxis, :, :, np.newaxis])))
-
+            predicted_emotions.append(configs.expressions.index(model.predict_emotion(roi[np.newaxis, :, :, np.newaxis])))
+        
+        if len(cropped_faces) == 1:
+            cropped_faces.append(np.zeros_like(cropped_faces[0]))
+        
         return cropped_faces, predicted_emotions

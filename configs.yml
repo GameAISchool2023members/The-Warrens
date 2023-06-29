@@ -6,4 +6,4 @@ wall_prob: 0.5
 empty_tile: 0
 ground_tile: 1
 wall_tile: 2
-expressions: ['Happy', 'Sad', 'Fear', 'Disgust', 'Surprise', 'Anger', 'Neutral']
+expressions: ['Happy', 'Sad', 'Fear', 'Disgust', 'Surprise', 'Angry', 'Neutral']
