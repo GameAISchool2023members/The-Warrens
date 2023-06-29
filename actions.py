@@ -16,6 +16,9 @@ class Actions:
         # return the most used action in the last actions_window actions
         return max(set(self.actions), key=self.actions.count)
 
+    def is_buffer_full(self):
+        return len(self.actions) == self.actions_window
+
     def __str__(self):
         return str(self.actions)
 
