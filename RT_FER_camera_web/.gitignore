@@ -1,0 +1,6 @@
+/.ipynb_checkpoints
+__pycache__
+test
+train
+utils
+Facial_Expression_Training.ipynb
