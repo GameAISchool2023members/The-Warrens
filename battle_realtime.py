@@ -108,7 +108,7 @@ class BattleLogic:
                 print(f'Player 1 healed himself for {self.player1.abilities.get_heal(action_p1)} health')
             elif self.player1.abilities.get_type(action_p1) == 'shield':
                 self.player1.activate_shield()
-                print(f'Player 1 shielded himself for {self.player1.abilities.get_shield(action_p1)} health')
+                print(f'Player 1 shielded himself')
 
 
         if self.player2.abilities.is_ability_ready(action_p2):
@@ -120,21 +120,10 @@ class BattleLogic:
                 print(f'Player 2 healed himself for {self.player2.abilities.get_heal(action_p2)} health')
             elif self.player2.abilities.get_type(action_p2) == 'shield':
                 self.player2.activate_shield()
-                print(f'Player 2 shielded himself for {self.player2.abilities.get_shield(action_p2)} health')
+                print(f'Player 2 shielded himself')
 
         self.player1.clock()# abilities.decrease_cooldowns()
         self.player2.clock()# abilities.decrease_cooldowns()
-
-        if ability_p1.is_ready():
-            if ability_p1.is_offensive:
-                self.player2.health_points -= ability_p1.damage
-                print(f'Player 1 shot Player 2 for {ability_p1.name} damage')
-            elif ability_p1.is_heal:
-                self.player1.health_points += ability_p1.heal
-                print(f'Player 1 healed himself for {ability_p1.name} health')
-            elif ability_p1.is_shield:
-                ability_p1.shield += ability_p1.shield_increment
-                print(f'Player 1 shielded himself for {ability_p1.name} health')
         
             
         # implement 

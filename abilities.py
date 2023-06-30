@@ -46,7 +46,7 @@ class Abilities:
     def get_damage(self, index):
         return self.damages[index]
     
-    def decrease_cooldowns(self):
+    def regen_mana(self):
         # decrease the cooldown of all abilities
         self.current_mana_pools += self.regen_speeds
     

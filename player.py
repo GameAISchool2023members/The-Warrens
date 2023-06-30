@@ -28,15 +28,15 @@ class Player:
         self.shield = True
         self.shield_cool_down = 30
 
-    def decrease_shield_cool_down(self):
+    def decrease_shield_remaining_time(self):
         self.shield_cool_down -= 1
         if self.shield_cool_down == 0:
             self.shield = False
 
 
     def clock(self):
-        self.decrease_shield_cool_down()
-        self.abilities.decrease_cooldowns()
+        self.decrease_shield_remaining_time()
+        self.abilities.regen_mana()
         
 
     def __str__(self):
