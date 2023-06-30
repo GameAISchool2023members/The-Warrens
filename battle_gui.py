@@ -7,6 +7,9 @@ from face_prediction import VideoCamera
 from utils import add_outline_to_image
 from configs import configs
 
+from battle import BattleLogic
+from player import Player
+
 pygame.init()
 pygame.display.set_caption('Face2Face')
 icon = pygame.image.load('assets/icon.png')
@@ -37,6 +40,10 @@ class EncounterGUI:
         self.create_circles()
         self.make_title()
         self.update_screen()
+
+        self.p1 = Player(id=1, hitpoints=5)
+        self.p2 = Player(id=2, hitpoints=5)
+        self.battlelogic = BattleLogic(self.p1, self.p2)
     
     def make_title(self):
         # text at the bottom
