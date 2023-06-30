@@ -8,5 +8,9 @@ empty_tile: 0
 ground_tile: 1
 wall_tile: 2
 
+window_width: 1280
+window_height: 720
+total_lives: 5
+
 expression_window: 5
 expressions: ['Happy', 'Sad', 'Fear', 'Disgust', 'Surprise', 'Angry', 'Neutral']

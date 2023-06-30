@@ -13,7 +13,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 class VideoCamera(object):
     def __init__(self):
         # Use correct camera index for Mac and PC ¯\_(ツ)_/¯
-        self.video = cv2.VideoCapture(1 if sys.platform == 'darwin' 0)
+        self.video = cv2.VideoCapture(1 if sys.platform == 'darwin' else 0)
 
     def __del__(self):
         self.video.release()

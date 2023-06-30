@@ -4,27 +4,19 @@ import cv2
 import os
 from face_prediction import VideoCamera
 
+from configs import configs
+
 pygame.init()
 
 class EncounterGUI:
     def __init__(self) -> None:
         self.background = pygame.image.load('assets/encounter.jpg')
         self.faces_positions = [(210, 392), (436, 392)]
-        self.h, self.w = 720, 1280
+        self.h, self.w = configs.window_height, configs.window_width
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.camera = VideoCamera()
-
-        ratio_h, ratio_w = self.h / 768, self.w / 768
-        for i, face_position in enumerate(self.faces_positions):
-            self.faces_positions[i] = (face_position[0] * ratio_w,
-                                       face_position[1] * ratio_h)
-#         print(self.faces_positions)
-
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(pygame.transform.scale(self.background, (self.w, self.h)), (0, 0))
-        self.update_screen([])
         
-        self.total_life = 5 # Total_lifes to be defined
+        self.total_life = configs.total_lives # Total_lifes to be defined
         self.circles_left = []
         self.life_tobe_consumed_left = self.total_life -1
         
@@ -34,16 +26,26 @@ class EncounterGUI:
         self.create_circles() 
         
         # text at the bottom
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, self.h // 20)
         text_surface = font.render("Two AI researchers arguing in Cambribdge, brought by stable diffusion", True, (255, 255, 255))
         text_rect = text_surface.get_rect()
         text_rect.centerx = self.screen.get_rect().centerx
-        text_rect.bottom = self.screen.get_rect().bottom - 10
+        text_rect.bottom = self.screen.get_rect().bottom# - 10
         self.screen.blit(text_surface, text_rect)
+        
+        ratio_h, ratio_w = self.h / 768, self.w / 768
+        for i, face_position in enumerate(self.faces_positions):
+            self.faces_positions[i] = (face_position[0] * ratio_w,
+                                       face_position[1] * ratio_h)
+
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(pygame.transform.scale(self.background, (self.w, self.h)), (0, 0))
+        self.update_screen()
         
         
     # Draw players life (circles)
     def create_circles(self):
+        # TODO: these values should be resized based on window size and amount
         circle_radius = 10
         circle_spacing = 10
         circle_top_left = (20, 20)
@@ -74,7 +76,7 @@ class EncounterGUI:
                 pygame.draw.circle(self.screen, (255, 0, 0), circle[0], circle[1], 1)
                 self.life_tobe_consumed_right -=1
     
-    def update_screen(self, faces):
+    def update_screen(self):
         cropped_faces, predicted_emotions = self.camera.get_frame()  
 
         for face, face_position, predicted_emotion in zip(cropped_faces, self.faces_positions, predicted_emotions):
@@ -82,28 +84,23 @@ class EncounterGUI:
                 fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
                 self.screen.blit(pygame.transform.scale(pygame.surfarray.make_surface(fixed_face), (250, 250)), (face_position[0], face_position[1] - 250))
                 # Beat the shit out of him
-                self.modify_cirlces(predicted_emotion)
+                self.modify_circles(predicted_emotion)
             
         pygame.display.flip()
 
         
-    def render(self, faces):
+    def render(self):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-            self.update_screen(faces)
+            self.update_screen()
             pygame.display.flip()
 
 
 if __name__ == "__main__":
     gui = EncounterGUI()
 
-    faces = [
-#         np.random.rand(512, 512),
-#         np.random.rand(512, 512)*255
-    ]
-
-    gui.render(faces)
+    gui.render()
     # cooldown period
