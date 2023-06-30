@@ -3,7 +3,7 @@ from model import FacialExpressionModel
 import numpy as np
 import os
 import sys
-# import pygame
+import pygame
 
 from configs import configs
 
@@ -18,7 +18,7 @@ class VideoCamera(object):
         self.no_face = pygame.image.load('assets/noface.png')
         self.processed_faces = [self.no_face for _ in range(n_players)]
         self.predicted_emotions = [-1 for _ in range(n_players)]
-        self.patience = [10 for _ in range(n_players)]
+        self.patience = [30 for _ in range(n_players)]
         self.bboxes_at = [-1 for _ in range(n_players)]
         
     def __del__(self):
@@ -51,11 +51,11 @@ class VideoCamera(object):
     
                 self.processed_faces[at] = cropped_face
                 self.predicted_emotions[at] = predicted_emotion
-                self.patience[at] = 10
+                self.patience[at] = 50
                 self.bboxes_at[at] = x
                 
         for i in range(len(self.patience)):
-            if 0 < self.patience[i] < 10:
+            if 0 < self.patience[i] < 30:
                 self.predicted_emotions[i] = -1
             elif self.patience[i] <= 0:
                 self.predicted_emotions[i] = -1

@@ -8,7 +8,7 @@ class Player:
         self.shield = False
         self.shield_cool_down = 0
 
-        self.actions = Actions(actions_window=5)
+        self.actions = Actions(actions_window=5) # TODO: needs to go in a config file
         self.abilities = Abilities()
 
 

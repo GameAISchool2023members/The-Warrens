@@ -26,10 +26,15 @@ class BattleLogic:
         self.player2 = player2
         # None: game's not finished yet, 0: draw, 1: player 1, 2: player 2.
         self.winner: Optional[int] = None
-        self.num_actions: int = len(configs.expressions)
+        self.number_actions: int = len(configs.expressions)
 
         self.list_face_expression1 = []
         self.list_face_expression2 = []
+
+        self.exp_act_cntr = 0
+
+        self.required_actions_1 = self.change_required_action(self.number_actions)
+        self.required_actions_2 = self.change_required_action(self.number_actions)
 
 
     # def _add_expressions(self, expression1, expression2):
@@ -58,21 +63,38 @@ class BattleLogic:
         mode = statistics.mode(list_face_expression)
         return mode
 
+    def change_required_action(self, number_actions):
+        # this should go in game_logic, should include a counter for the number of times
+        # the same required action is repeated
+        # number_actions should be a class attribute
+        return np.random.choice(number_actions)
+
+
+    def init_required_action(self):
+        self.required_actions_1 = self.change_required_action(self.number_actions)
+        self.required_actions_2 = self.change_required_action(self.number_actions)
+        self.exp_act_cntr = 0
+
+
     # TODO: (ANTONIO)
-    def get_expected_action(self) -> Tuple[int, int]:
-        expected_action_player_1 = np.random.choice(self.num_actions)  # club expressions (if you want to remove 'disgust' etc.)
-        expected_action_player_2 = np.random.choice(self.num_actions)
-        print(f"Player 1: {expected_action_player_1}")
-        print(f"Player 2: {expected_action_player_2}")
-        return expected_action_player_1, expected_action_player_2
+    def get_required_action(self) -> Tuple[int, int]:
+        if self.exp_act_cntr == 0:
+            self.required_actions_1 = self.change_required_action(self.number_actions)
+            self.required_actions_2 = self.change_required_action(self.number_actions)
+
+        print(f"Player 1: {self.required_actions_1}")
+        print(f"Player 2: {self.required_actions_2}")
+        return self.required_actions_1, self.required_actions_2
 
     def check_actions_and_update_hp(self, action_player_1: int, action_player_2: int,
-                                    expected_action_player_1: int, expected_action_player_2: int) -> None:
+                                    required_action_player_1: int, required_action_player_2: int) -> None:
         #TODO: Link these to GUI and to the actual expressions coming from the NN model (camera)
-        if action_player_1 == expected_action_player_1: # change this to mode of player 1's actions
+        if action_player_1 == required_action_player_1: # change this to mode of player 1's actions
             self.player2.health_points -= 1
-        if action_player_2 == expected_action_player_2: # change this to mode of player 2's actions
+            self.init_required_action()
+        if action_player_2 == required_action_player_2: # change this to mode of player 2's actions
             self.player1.health_points -= 1
+            self.init_required_action()
 
     def check_vitals(self) -> Optional[int]:
         if self.player1.health_points <= 0 and self.player2.health_points <= 0:
@@ -91,19 +113,21 @@ class BattleLogic:
         
 
     # TODO: (ANTONIO) I think that battle only has to know about actions. Expr->action should go in another file
-    def step(self, expected_action_player_1, expected_action_player_2, action_player_1: int, action_player_2: int):
+    def step(self, required_action_player_1, required_action_player_2, action_player_1: int, action_player_2: int):
 
-        # If number of frames that player 1 had expected action, player 1 shoots player 2
-        # Elif number of frames that player 2 had expected action, player 2 shoots player 1
+        # If number of frames that player 1 had required action, player 1 shoots player 2
+        # Elif number of frames that player 2 had required action, player 2 shoots player 1
 
         #TODO: Link these to GUI and to the actual expressions coming from the NN model (camera)
-        if action_player_1 == expected_action_player_1: # change this to mode of player 1's actions
-            print("Player 1 shot Player 2")
-            self.player2.health_points -= 1
-        if action_player_2 == expected_action_player_2: # change this to mode of player 2's actions
-            print("Player 2 shot Player 1")
-            self.player1.health_points -= 1
-            
+        
+        if action_player_1 != -1 or action_player_2 != -1:
+            if action_player_1 == required_action_player_1: # change this to mode of player 1's actions
+                print("Player 1 shot Player 2")
+                self.player2.health_points -= 1
+            if action_player_2 == required_action_player_2: # change this to mode of player 2's actions
+                print("Player 2 shot Player 1")
+                self.player1.health_points -= 1
+                
         # implement 
         # check if cooldown is over
         # check the attack of each player
@@ -111,11 +135,19 @@ class BattleLogic:
         if self.player1.health_points <= 0 and self.player2.health_points <= 0:
             return 0  # 0 means draw, 1 means player 1, 2 means player 2.
         # check empty health points:
+        # TODO: after health lost, reset required expressions
         if self.player1.health_points <= 0:
             self.winner = self.player2.id
             return self.player2.id
         if self.player2.health_points <= 0:
             self.winner = self.player1.id
             return self.player1.id
-        else: # Nobody one. Continue playing.
-            return
+        else: # Nobody won. Continue playing.
+            return None
+
+    def clock(self):
+        self.exp_act_cntr += 1
+        self.exp_act_cntr = self.exp_act_cntr % configs.expression_window + 1
+
+        self.player1.clock()
+        self.player2.clock()

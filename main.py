@@ -8,13 +8,6 @@ from face_prediction import VideoCamera
 
 from configs import configs
 
-def change_expected_action(num_actions):
-    # this should go in game_logic, should include a counter for the number of times
-    # the same expected action is repeated
-    # num_actions should be a class attribute
-    return np.random.choice(num_actions)
-
-
 
 
 
@@ -30,8 +23,6 @@ battle = BattleLogic(player1, player2)
 camera_feed = VideoCamera()
 
 winner = None
-
-exp_act_cntr = 0
 
 # JSUT A PLACEHOLDER FOR PYGAME LOOP:
 while True:
