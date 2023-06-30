@@ -24,16 +24,21 @@ class VideoCamera(object):
 
         gray_fr = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
         faces = facec.detectMultiScale(gray_fr, 1.3, 5)
+        # keep faces ordered
+        faces = sorted(faces, key=lambda x: x[0])
         
         assert faces is not None, 'No faces at all?'
         cropped_faces = [np.zeros((512, 512)) for _ in range(2)]  # empty faces
         predicted_emotions = [-1, -1]  # no predictions
 
-        for i, (x, y, w, h) in enumerate(faces):
-            fc = gray_fr[y:y+h, x:x+w]
-            roi = cv2.resize(fc, (48, 48))
-            
-            cropped_faces[i] = cv2.resize(fc, (512, 512))
-            predicted_emotions[i] = configs.expressions.index(model.predict_emotion(roi[np.newaxis, :, :, np.newaxis]))
+        # weird for-loop because camera can get either 0 or more faces, but we always want 2
+        for i in range(len(cropped_faces)):
+            if i < len(faces):
+                x, y, w, h = faces[i]
+                fc = gray_fr[y:y+h, x:x+w]
+                roi = cv2.resize(fc, (48, 48))
+
+                cropped_faces[i] = cv2.resize(fc, (512, 512))
+                predicted_emotions[i] = configs.expressions.index(model.predict_emotion(roi[np.newaxis, :, :, np.newaxis]))
         
         return cropped_faces, predicted_emotions
