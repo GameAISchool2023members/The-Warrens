@@ -23,29 +23,72 @@ class EncounterGUI:
         self.screen.fill((0, 0, 0))
         self.screen.blit(pygame.transform.scale(self.background, (self.w, self.h)), (0, 0))
         self.update_screen([])
-    
-    def update_screen(self,
-                      faces):
-        cropped_faces, predicted_emotions = self.camera.get_frame()
-#         if len(cropped_faces)>0:
-#             cv2.imshow('fucking_face', cropped_faces[0])
         
+        self.total_life = 5 # Total_lifes to be defined
+        self.circles_left = []
+        self.life_tobe_consumed_left = self.total_life -1
         
-        for face, face_position in zip(cropped_faces, self.faces_positions):
-
-            fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
-            self.screen.blit(pygame.transform.scale(pygame.surfarray.make_surface(fixed_face), (250, 250)), (face_position[0], face_position[1] - 250))
-        pygame.display.flip()
+        self.circles_right = []
+        self.life_tobe_consumed_right = self.total_life -1
         
-        # text at the bottom (Not sure where to stick this code so I am just having it here)
+        self.create_circles() 
+        
+        # text at the bottom
         font = pygame.font.Font(None, 36)
         text_surface = font.render("Two AI researchers arguing in Cambribdge, brought by stable diffusion", True, (255, 255, 255))
         text_rect = text_surface.get_rect()
         text_rect.centerx = self.screen.get_rect().centerx
         text_rect.bottom = self.screen.get_rect().bottom - 10
         self.screen.blit(text_surface, text_rect)
+        
+        
+    # Draw players life (circles)
+    def create_circles(self):
+        circle_radius = 10
+        circle_spacing = 10
+        circle_top_left = (20, 20)
+        for i in range(self.total_life):
+            circle_center = (circle_top_left[0] + i * (circle_radius * 2 + circle_spacing), circle_top_left[1])
+            self.circles_left.append((circle_center, circle_radius))
+            pygame.draw.circle(self.screen, (255, 0, 0), circle_center, circle_radius)
 
+        circle_top_right = (self.w - circle_top_left[0] - (circle_radius * 2 + circle_spacing) * 5, circle_top_left[1])
+        for i in range(self.total_life):
+            circle_center = (circle_top_right[0] + i * (circle_radius * 2 + circle_spacing), circle_top_right[1])
+            self.circles_right.append((circle_center, circle_radius))
+            pygame.draw.circle(self.screen, (255, 0, 0), circle_center, circle_radius)
+        
+
+    # Consuming player life (test for now with happy and angry face)
+    def modify_circles(self, prediction):
+        if prediction == 0: # happy (player left lose point, okay i know it's counter intuitive, fix it)
+            if self.life_tobe_consumed_left >= 0:
+                circle = self.circles_left[self.life_tobe_consumed_left]
+                pygame.draw.circle(self.screen, (255, 255, 255), circle[0], circle[1])
+                pygame.draw.circle(self.screen, (255, 0, 0), circle[0], circle[1], 1)
+                self.life_tobe_consumed_left -=1
+        elif prediction == 5: #angry (player right lose point)
+            if self.life_tobe_consumed_right >= 0:
+                circle = self.circles_right[self.life_tobe_consumed_right]
+                pygame.draw.circle(self.screen, (255, 255, 255), circle[0], circle[1])
+                pygame.draw.circle(self.screen, (255, 0, 0), circle[0], circle[1], 1)
+                self.life_tobe_consumed_right -=1
     
+    def update_screen(self, faces):
+        
+        cropped_faces, predicted_emotions = self.camera.get_frame()  
+#         print(predicted_emotions[0])
+        
+        # Beat the shit out of him
+        self.modify_circles(predicted_emotions[0]) #TODO need control on predicition in file face_predicition 
+        
+        for face, face_position in zip(cropped_faces, self.faces_positions):
+
+            fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
+            self.screen.blit(pygame.transform.scale(pygame.surfarray.make_surface(fixed_face), (250, 250)), (face_position[0], face_position[1] - 250))
+        pygame.display.flip()
+
+        
     def render(self, faces):
         while True:
             for event in pygame.event.get():
