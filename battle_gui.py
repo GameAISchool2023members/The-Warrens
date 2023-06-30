@@ -9,7 +9,7 @@ pygame.init()
 class EncounterGUI:
     def __init__(self) -> None:
         self.background = pygame.image.load('assets/encounter.jpg')
-        self.faces_positions = [(168, 372), (436, 384)]
+        self.faces_positions = [(210, 392), (436, 392)]
         self.h, self.w = 720, 1280
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.camera = VideoCamera()
@@ -27,15 +27,23 @@ class EncounterGUI:
     def update_screen(self,
                       faces):
         cropped_faces, predicted_emotions = self.camera.get_frame()
+#         if len(cropped_faces)>0:
+#             cv2.imshow('fucking_face', cropped_faces[0])
+        
+        
         for face, face_position in zip(cropped_faces, self.faces_positions):
-            print(face.shape)
-#             fixed_face = np.expand_dims(face.T, axis=-1)
-            fixed_face = face.T
-            print(fixed_face.shape)
-            
+
+            fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
             self.screen.blit(pygame.transform.scale(pygame.surfarray.make_surface(fixed_face), (250, 250)), (face_position[0], face_position[1] - 250))
-#               pygame.draw.circle(self.screen, (0, 0, 0), face_position, 20)
         pygame.display.flip()
+        
+        # text at the bottom (Not sure where to stick this code so I am just having it here)
+        font = pygame.font.Font(None, 36)
+        text_surface = font.render("Two AI researchers arguing in Cambribdge, brought by stable diffusion", True, (255, 255, 255))
+        text_rect = text_surface.get_rect()
+        text_rect.centerx = self.screen.get_rect().centerx
+        text_rect.bottom = self.screen.get_rect().bottom - 10
+        self.screen.blit(text_surface, text_rect)
 
     
     def render(self, faces):
@@ -52,8 +60,8 @@ if __name__ == "__main__":
     gui = EncounterGUI()
 
     faces = [
-        np.random.rand(512, 512),
-        np.random.rand(512, 512)*255
+#         np.random.rand(512, 512),
+#         np.random.rand(512, 512)*255
     ]
 
     gui.render(faces)
