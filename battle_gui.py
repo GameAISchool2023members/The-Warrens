@@ -243,7 +243,10 @@ class EncounterGUI:
                     print("Draw!")
                 else:
                     print(f"Player {winner} wins!")
-                break
+            
+            if self.p1.health_points == 0 or self.p2.health_points == 0:
+                pygame.quit()
+                exit(0)
             
             # TODO: End game when someone dies
             # TODO: Check why people are dying so fast
