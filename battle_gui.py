@@ -4,9 +4,13 @@ import cv2
 import os
 from face_prediction import VideoCamera
 
+from utils import add_outline_to_image
 from configs import configs
 
 pygame.init()
+pygame.display.set_caption('Face2Face')
+icon = pygame.image.load('assets/icon.png')
+pygame.display.set_icon(icon)
 
 class EncounterGUI:
     def __init__(self) -> None:
@@ -47,17 +51,17 @@ class EncounterGUI:
     # Draw players life (circles)
     def create_circles(self):
         # TODO: these values should be resized based on window size and amount
-        circle_radius = 10
-        circle_spacing = 10
-        circle_top_left = (20, 20)
+        circle_radius = min(self.h // 20, self.w // (5 * (self.total_life * 2 + 1)))
+        circle_spacing = circle_radius // 4
+        circle_top_left = (circle_radius, circle_radius)
         for i in range(self.total_life):
             circle_center = (circle_top_left[0] + i * (circle_radius * 2 + circle_spacing), circle_top_left[1])
             self.circles_left.append((circle_center, circle_radius))
             pygame.draw.circle(self.screen, (255, 0, 0), circle_center, circle_radius)
 
-        circle_top_right = (self.w - circle_top_left[0] - (circle_radius * 2 + circle_spacing) * 5, circle_top_left[1])
+        circle_top_right = (self.w - circle_radius, circle_radius)
         for i in range(self.total_life):
-            circle_center = (circle_top_right[0] + i * (circle_radius * 2 + circle_spacing), circle_top_right[1])
+            circle_center = (circle_top_right[0] - i * (circle_radius * 2 + circle_spacing), circle_top_right[1])
             self.circles_right.append((circle_center, circle_radius))
             pygame.draw.circle(self.screen, (255, 0, 0), circle_center, circle_radius)
         
@@ -79,7 +83,7 @@ class EncounterGUI:
     
     def update_screen(self):
         cropped_faces, predicted_emotions = self.camera.get_frame()  
-
+        
         for face, face_position, predicted_emotion in zip(cropped_faces, self.faces_positions, predicted_emotions):
             if predicted_emotion != -1:
                 fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
