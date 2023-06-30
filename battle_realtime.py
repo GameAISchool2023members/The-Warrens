@@ -101,11 +101,15 @@ class BattleLogic:
         # TODO: CHANGE COOLDOWNS FOR ABILITIES. MAYBE USE A GLOBAL CLOCK FOR THE ENTIRE GAME
         if self.player1.abilities.is_ability_ready(action_p1):
             if self.player1.abilities.get_type(action_p1) == 'damage':
-                self.player2.health_points -= self.player1.abilities.get_damage(action_p1)
-                print(f'Player 1 shot Player 2 for {self.player1.abilities.get_damage(action_p1)} damage')
+                if not self.player2.has_shield():
+                    self.player2.health_points -= self.player1.abilities.get_damage(action_p1)
+                    print(f'Player 1 shot Player 2 for {self.player1.abilities.get_damage(action_p1)} damage')
+                else:
+                    # self.player2.deactivate_shield()
+                    print(f'Player 2 shielded himself')
             elif self.player1.abilities.get_type(action_p1) == 'heal':
-                self.player1.health_points += self.player1.abilities.get_heal(action_p1)
-                print(f'Player 1 healed himself for {self.player1.abilities.get_heal(action_p1)} health')
+                self.player1.health_points += self.player1.abilities.get_damage(action_p1)
+                print(f'Player 1 healed himself for {self.player1.abilities.get_damage(action_p1)} health')
             elif self.player1.abilities.get_type(action_p1) == 'shield':
                 self.player1.activate_shield()
                 print(f'Player 1 shielded himself')
@@ -113,11 +117,15 @@ class BattleLogic:
 
         if self.player2.abilities.is_ability_ready(action_p2):
             if self.player2.abilities.get_type(action_p2) == 'damage':
-                self.player1.health_points -= self.player2.abilities.get_damage(action_p2)
-                print(f'Player 2 shot Player 1 for {self.player2.abilities.get_damage(action_p2)} damage')
+                if not self.player1.has_shield():
+                    self.player1.health_points -= self.player2.abilities.get_damage(action_p2)
+                    print(f'Player 2 shot Player 1 for {self.player2.abilities.get_damage(action_p2)} damage')
+                else:
+                    # self.player1.deactivate_shield()
+                    print(f'Player 1 shielded himself')
             elif self.player2.abilities.get_type(action_p2) == 'heal':
-                self.player2.health_points += self.player2.abilities.get_heal(action_p2)
-                print(f'Player 2 healed himself for {self.player2.abilities.get_heal(action_p2)} health')
+                self.player2.health_points += self.player2.abilities.get_damage(action_p2)
+                print(f'Player 2 healed himself for {self.player2.abilities.get_damage(action_p2)} health')
             elif self.player2.abilities.get_type(action_p2) == 'shield':
                 self.player2.activate_shield()
                 print(f'Player 2 shielded himself')

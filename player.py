@@ -33,6 +33,8 @@ class Player:
         if self.shield_cool_down == 0:
             self.shield = False
 
+    def has_shield(self):
+        return self.shield
 
     def clock(self):
         self.decrease_shield_remaining_time()
