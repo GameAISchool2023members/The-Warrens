@@ -4,6 +4,7 @@ import numpy as np
 from actions import Actions
 from player import Player
 from battle import BattleLogic
+from face_prediction import VideoCamera
 
 from configs import configs
 
@@ -16,11 +17,16 @@ player1 = Player(id=1, hitpoints=5)
 player2 = Player(id=2, hitpoints=5)
 
 battle = BattleLogic(player1, player2)
+camera_feed = VideoCamera()
+
 winner = None
 # JSUT A PLACEHOLDER FOR PYGAME LOOP:
 while True:
     print()
     print('##############################################')
+    cropped_faces, predicted_emotions = camera_feed.get_frame()
+    print(f"Predicted emotions: {predicted_emotions}")
+    exit(2)
     expected_action_player_1 = np.random.choice(number_actions)  # club expressions (if you want to remove 'disgust' etc.)
     expected_action_player_2 = np.random.choice(number_actions)
     print(f"Player 1 expected action: {expected_action_player_1}")
