@@ -23,16 +23,6 @@ class EncounterGUI:
         self.circles_right = []
         self.life_tobe_consumed_right = self.total_life -1
         
-        self.create_circles() 
-        
-        # text at the bottom
-        font = pygame.font.Font(None, self.h // 20)
-        text_surface = font.render("Two AI researchers arguing in Cambribdge, brought by stable diffusion", True, (255, 255, 255))
-        text_rect = text_surface.get_rect()
-        text_rect.centerx = self.screen.get_rect().centerx
-        text_rect.bottom = self.screen.get_rect().bottom# - 10
-        self.screen.blit(text_surface, text_rect)
-        
         ratio_h, ratio_w = self.h / 768, self.w / 768
         for i, face_position in enumerate(self.faces_positions):
             self.faces_positions[i] = (face_position[0] * ratio_w,
@@ -40,8 +30,19 @@ class EncounterGUI:
 
         self.screen.fill((0, 0, 0))
         self.screen.blit(pygame.transform.scale(self.background, (self.w, self.h)), (0, 0))
+        self.create_circles()
+        self.make_title()
         self.update_screen()
-        
+    
+    def make_title(self):
+        # text at the bottom
+        font_size = self.h // 20
+        font = pygame.font.Font(None, font_size)
+        text_surface = font.render("Two AI researchers arguing in Cambribdge, brought by stable diffusion", True, (255, 255, 255))
+        text_rect = text_surface.get_rect()
+        text_rect.centerx = self.screen.get_rect().centerx
+        text_rect.bottom = self.screen.get_rect().bottom - font_size
+        self.screen.blit(text_surface, text_rect)
         
     # Draw players life (circles)
     def create_circles(self):
