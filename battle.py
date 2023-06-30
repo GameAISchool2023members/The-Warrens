@@ -86,30 +86,30 @@ class BattleLogic:
         print(f"Player 2: {self.required_actions_2}")
         return self.required_actions_1, self.required_actions_2
 
-    def check_actions_and_update_hp(self, action_player_1: int, action_player_2: int,
-                                    required_action_player_1: int, required_action_player_2: int) -> None:
-        #TODO: Link these to GUI and to the actual expressions coming from the NN model (camera)
-        if action_player_1 == required_action_player_1: # change this to mode of player 1's actions
-            self.player2.health_points -= 1
-            self.init_required_action()
-        if action_player_2 == required_action_player_2: # change this to mode of player 2's actions
-            self.player1.health_points -= 1
-            self.init_required_action()
+    # def check_actions_and_update_hp(self, action_player_1: int, action_player_2: int,
+    #                                 required_action_player_1: int, required_action_player_2: int) -> None:
+    #     #TODO: Link these to GUI and to the actual expressions coming from the NN model (camera)
+    #     if action_player_1 == required_action_player_1: # change this to mode of player 1's actions
+    #         self.player2.health_points -= 1
+    #         self.init_required_action()
+    #     if action_player_2 == required_action_player_2: # change this to mode of player 2's actions
+    #         self.player1.health_points -= 1
+    #         self.init_required_action()
 
-    def check_vitals(self) -> Optional[int]:
-        if self.player1.health_points <= 0 and self.player2.health_points <= 0:
-            return 0  # 0 means draw, 1 means player 1, 2 means player 2.
-        # check empty health points:
-        elif self.player1.health_points <= 0:
-            self.winner = self.player2.id
-            print("Player 2 shot Player 1")
-            return self.player2.id
-        elif self.player2.health_points <= 0:
-            self.winner = self.player1.id
-            print("Player 1 shot Player 2")
-            return self.player1.id
-        else:
-            return self.winner  # will be None
+    # def check_vitals(self) -> Optional[int]:
+    #     if self.player1.health_points <= 0 and self.player2.health_points <= 0:
+    #         return 0  # 0 means draw, 1 means player 1, 2 means player 2.
+    #     # check empty health points:
+    #     elif self.player1.health_points <= 0:
+    #         self.winner = self.player2.id
+    #         print("Player 2 shot Player 1")
+    #         return self.player2.id
+    #     elif self.player2.health_points <= 0:
+    #         self.winner = self.player1.id
+    #         print("Player 1 shot Player 2")
+    #         return self.player1.id
+    #     else:
+    #         return self.winner  # will be None
         
 
     # TODO: (ANTONIO) I think that battle only has to know about actions. Expr->action should go in another file
@@ -136,6 +136,7 @@ class BattleLogic:
             return 0  # 0 means draw, 1 means player 1, 2 means player 2.
         # check empty health points:
         # TODO: after health lost, reset required expressions
+        print(f'HP: {self.player1.health_points},{self.player2.health_points}')
         if self.player1.health_points <= 0:
             self.winner = self.player2.id
             return self.player2.id

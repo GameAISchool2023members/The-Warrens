@@ -79,15 +79,15 @@ class EncounterGUI:
     def modify_emoji(self, expected_image, face_position):
         image_path = 'assets/emojis/'+str(expected_image)+'.png'  # Replace with the path to your image
         image = pygame.image.load(image_path)
-        image_size = (512 // 4, 512 // 4)
-        image_position = (face_position[0] + (512 // 2 - image_size[0]), face_position[1] + 20)
+        image_size = (250 // 3, 250 // 3)
+        image_position = (face_position[0] + (250 // 2 - image_size[0]), face_position[1] + 20)
         self.screen.blit(pygame.transform.scale(image, image_size), image_position)
 
     def show_predicted_emotion(self, predicted_emotion, face_position):
         image_path = 'assets/emojis/'+str(predicted_emotion)+'.png'  # Replace with the path to your image
         image = pygame.image.load(image_path)
-        image_size = (512 // 4, 512 // 4)
-        image_position = (face_position[0] + 100, face_position[1] - (512 + 20))
+        image_size = (250 // 6, 250 // 6)
+        image_position = (face_position[0] + 100, face_position[1] - (250 + image_size[1] + 10))
         self.screen.blit(pygame.transform.scale(image, image_size), image_position) 
 
     def loop_stuff(self):
@@ -141,7 +141,7 @@ class EncounterGUI:
         self.battlelogic.clock()
         print("")
 
-        if (expression_player_1 != -1) and (expression_player_2 != -1):
+        if (expression_player_1 != -1) or (expression_player_2 != -1):
             self.modify_circles(expected_action_p1, expected_action_p2, expression_player_1, expression_player_2)
         self.update_screen(cropped_faces=cropped_faces, predicted_emotions=predicted_emotions)
         return winner
@@ -169,13 +169,13 @@ class EncounterGUI:
     def modify_circles(self, required_p1, required_p2, prediction_p1, prediction_p2):
         if required_p1 == prediction_p1:
             if (self.total_life - self.p1.health_points) >= 0:
-                circle = self.circles_left[self.total_life - self.p1.health_points]
+                circle = self.circles_right[self.total_life - self.p2.health_points]
                 pygame.draw.circle(self.screen, (255, 255, 255), circle[0], circle[1])
                 pygame.draw.circle(self.screen, (255, 0, 0), circle[0], circle[1], 1)
                 # self.life_tobe_consumed_left -=1
         elif required_p2 == prediction_p2:
             if (self.total_life - self.p2.health_points)  >= 0:
-                circle = self.circles_right[self.total_life - self.p2.health_points]
+                circle = self.circles_left[self.total_life - self.p1.health_points]
                 pygame.draw.circle(self.screen, (255, 255, 255), circle[0], circle[1])
                 pygame.draw.circle(self.screen, (255, 0, 0), circle[0], circle[1], 1)
                 # self.life_tobe_consumed_right -=1
@@ -216,16 +216,24 @@ class EncounterGUI:
             self.screen.blit(text_surface, text_rect)
             pygame.display.flip()
             time.sleep(1)
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(pygame.transform.scale(self.background, (self.w, self.h)), (0, 0))
+        self.create_circles()
+        pygame.display.flip()
         time.sleep(1)
 
 
     def render(self):
-        # self.make_countdown(self)
+        cd_shown = False
         while True: # battle loop
+            # sleep for 1 second
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+            if not cd_shown:
+                self.make_countdown()
+                cd_shown = True
             winner = self.loop_stuff()   # 1 step  # TODO: return battle ending condition
             # self.update_screen()     # TODO: we might need to move this to loop_stuff   NO, this is a render
             pygame.display.flip()
