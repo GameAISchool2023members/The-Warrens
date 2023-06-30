@@ -8,6 +8,16 @@ from face_prediction import VideoCamera
 
 from configs import configs
 
+def change_expected_action(num_actions):
+    # this should go in game_logic, should include a counter for the number of times
+    # the same expected action is repeated
+    # num_actions should be a class attribute
+    return np.random.choice(num_actions)
+
+
+
+
+
 random.seed(configs.seed)
 np.random.seed(configs.seed)
 
@@ -21,6 +31,8 @@ camera_feed = VideoCamera()
 
 winner = None
 
+exp_act_cntr = 0
+
 # JSUT A PLACEHOLDER FOR PYGAME LOOP:
 while True:
     print()
@@ -28,8 +40,16 @@ while True:
     cropped_faces, predicted_emotions = camera_feed.get_frame()
     print(predicted_emotions)
     print(f"Predicted emotions: {predicted_emotions}")
-    expected_action_player_1 = np.random.choice(number_actions)  # club expressions (if you want to remove 'disgust' etc.)
-    expected_action_player_2 = np.random.choice(number_actions)
+    # club expressions (if you want to remove 'disgust' etc.)
+
+    if exp_act_cntr == 0:
+        expected_action_player_1 = change_expected_action(number_actions)
+    
+    if exp_act_cntr == 0:
+        expected_action_player_2 = change_expected_action(number_actions)
+
+    exp_act_cntr += 1
+    exp_act_cntr = exp_act_cntr % configs.expression_window
     # print(f"Player 1 expected action: {expected_action_player_1}")
     # print(f"Player 2 expected action: {expected_action_player_2}")
 
