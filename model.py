@@ -1,8 +1,10 @@
+import tensorflow as tf
 from tensorflow.keras.models import model_from_json
 from tensorflow.python.keras.backend import set_session
 import numpy as np
 
-import tensorflow as tf
+from configs import configs
+
 
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.per_process_gpu_memory_fraction = 0.15
@@ -11,11 +13,6 @@ set_session(session)
 
 
 class FacialExpressionModel(object):
-
-    EMOTIONS_LIST = ["Angry", "Disgust",
-                     "Fear", "Happy",
-                     "Neutral", "Sad",
-                     "Surprise"]
 
     def __init__(self, model_json_file, model_weights_file):
         # load model from JSON file
@@ -31,5 +28,5 @@ class FacialExpressionModel(object):
     def predict_emotion(self, img):
         global session
         set_session(session)
-        self.preds = self.loaded_model.predict(img)
-        return FacialExpressionModel.EMOTIONS_LIST[np.argmax(self.preds)]
+        self.preds = self.loaded_model.predict(img, verbose=False)
+        return configs.expressions[np.argmax(self.preds)]

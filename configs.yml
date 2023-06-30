@@ -13,4 +13,4 @@ window_height: 720
 total_lives: 5
 
 expression_window: 5
-expressions: ['Happy', 'Sad', 'Fear', 'Disgust', 'Surprise', 'Angry', 'Neutral']
+expressions: ["Angry", "Disgust", "Fear", "Happy", "Neutral", "Sad", "Surprise"]
