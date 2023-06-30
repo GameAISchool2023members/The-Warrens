@@ -124,9 +124,11 @@ class BattleLogic:
             if action_player_1 == required_action_player_1: # change this to mode of player 1's actions
                 print("Player 1 shot Player 2")
                 self.player2.health_points -= 1
+                self.required_actions_1 = self.change_required_action(self.number_actions)
             if action_player_2 == required_action_player_2: # change this to mode of player 2's actions
                 print("Player 2 shot Player 1")
                 self.player1.health_points -= 1
+                self.required_actions_2 = self.change_required_action(self.number_actions)
                 
         # implement 
         # check if cooldown is over
