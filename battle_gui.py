@@ -75,17 +75,15 @@ class EncounterGUI:
                 self.life_tobe_consumed_right -=1
     
     def update_screen(self, faces):
-        
         cropped_faces, predicted_emotions = self.camera.get_frame()  
-#         print(predicted_emotions[0])
-        
-        # Beat the shit out of him
-        self.modify_circles(predicted_emotions[0]) #TODO need control on predicition in file face_predicition 
-        
-        for face, face_position in zip(cropped_faces, self.faces_positions):
 
-            fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
-            self.screen.blit(pygame.transform.scale(pygame.surfarray.make_surface(fixed_face), (250, 250)), (face_position[0], face_position[1] - 250))
+        for face, face_position, predicted_emotion in zip(cropped_faces, self.faces_positions, predicted_emotions):
+            if predicted_emotion != -1:
+                fixed_face = cv2.cvtColor(face.T, cv2.COLOR_GRAY2RGB)
+                self.screen.blit(pygame.transform.scale(pygame.surfarray.make_surface(fixed_face), (250, 250)), (face_position[0], face_position[1] - 250))
+                # Beat the shit out of him
+                self.modify_cirlces(predicted_emotion)
+            
         pygame.display.flip()
 
         
