@@ -25,7 +25,7 @@ class VideoCamera(object):
         gray_fr = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
         faces = facec.detectMultiScale(gray_fr, 1.3, 5)
         # keep faces ordered
-        faces = sorted(faces, key=lambda x: x[0])
+        faces = sorted(faces, key=lambda x: -x[0])
         
         assert faces is not None, 'No faces at all?'
         cropped_faces = [np.zeros((512, 512)) for _ in range(2)]  # empty faces
